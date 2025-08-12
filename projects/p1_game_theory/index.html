@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Cookiebot (must be first in <head>) -->
+<script id="Cookiebot"
+  src="https://consent.cookiebot.com/uc.js"
+  data-cbid="0a9e2c4e-c6d5-4b71-9e14-b4fdc20c48b8"
+  data-blockingmode="auto"
+  type="text/javascript">
+</script>
+
+<!-- Defer GA init until consent is given -->
+<!-- <script type="text/plain" data-cookieconsent="statistics" src="/js/ga-init.js"></script> -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WRMFW9VXZL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-WRMFW9VXZL');
+</script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My game theory simulations</title>
+  <link rel="stylesheet" href="/css/style.css" />
+
+
+  <!-- D3 and your chart helper stay as they were -->
+  <script src="https://d3js.org/d3.v7.js"></script>
+  <script src="./js/draw_line_chart.js"></script>
+  
+</head>
+<body class="page-project-white">
+  <nav><a href="../..">← Back to Home</a></nav>
+
+  
+
+  <main>
+
+    <h1>Hello Renaud!</h1>
+    <h2>
+      Nature in Code<br>
+      Chapter 8: Cooperation: Good Guys Can Finish First.
+    </h2>
+
+    <!-- 1) Dropdown + Reload button -->
+    <label for="demoSelector">Choose demo:</label>
+    <select id="demoSelector">
+      <option value="p1">Cooperators vs Defectors</option>
+      <option value="p2">Tit for Tat</option>
+      <option value="p3">Win-Stay, Lose-Shift</option>
+      <option value="all">All</option>
+    </select>
+    <button id="reloadButton">Reload</button>
+
+    <!-- 2) Chart container (not strictly required since your scripts append to <body>, 
+          but handy if you refactor later) -->
+    <div id="chartArea"></div>
+
+    <!-- 3) Loader logic -->
+    <script>
+    (function() {
+      const demoMap = {
+        p1: './js/script_p1.js',
+        p2: './js/script_p2.js',
+        p3: './js/script_p3.js'
+      };
+
+      function clearCharts() {
+        // remove every chart SVG
+        document.querySelectorAll('svg').forEach(el => el.remove());
+        // remove every <p> inserted by your scripts
+        document.querySelectorAll('body > p').forEach(el => el.remove());
+        // remove previously injected demo scripts
+        document.querySelectorAll('[data-demo-script]').forEach(s => s.remove());
+      }
+
+      function loadDemo(src) {
+        return new Promise((resolve, reject) => {
+          const tag = document.createElement('script');
+          tag.src = src;
+          tag.setAttribute('data-demo-script', '');
+          tag.onload  = () => resolve();
+          tag.onerror = () => reject(new Error(`Failed to load ${src}`));
+          document.body.appendChild(tag);
+        });
+      }
+
+      async function runSelection() {
+        clearCharts();
+        const choice = document.getElementById('demoSelector').value;
+        const toLoad = choice === 'all'
+          ? Object.values(demoMap)
+          : [ demoMap[choice] ];
+
+        for (const src of toLoad) {
+          await loadDemo(src);
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        // wire up both controls *after* they exist in the DOM
+        document.getElementById('demoSelector')
+                .addEventListener('change', runSelection);
+        document.getElementById('reloadButton')
+                .addEventListener('click', runSelection);
+
+        // run the default selection on page load
+        runSelection();
+      });
+    })();
+    </script>
+  </main>
+</body>
+</html>

@@ -1,0 +1,122 @@
+/* 1. Reset & Base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: sans-serif; line-height: 1.6; background-color: #242424; }
+
+/* 2. Hero */
+.hero {
+  position: relative;
+
+  /* same image, but break out the shorthand so we can tweak it */
+  background-image: url('../images/hero.jpg');
+  background-size: cover;            /* fill the box */
+  background-position: 50% 80%;      /* adjust the visible area (try 50% 20–35%) */
+  background-repeat: no-repeat;
+
+  /* scale height closer to 16:9 on wide screens, but cap it */
+  height: clamp(320px, 56.25vw, 70vh);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 8px;
+}
+.hero-overlay h1 { font-size: 2.5rem; }
+.hero-overlay p { font-size: 1.2rem; margin-top: 0.5rem; }
+
+/* 3. Projects Grid */
+/* Grid: make items stretch so cards can be equal height per row */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 2rem;
+  align-items: stretch; /* key */
+}
+
+/* Card becomes a column flexbox */
+.project-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;          /* keep it white on grey background */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;              /* fill the grid track height */
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Normalize thumbnail height with cropping for consistency */
+.project-card img.thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;      /* pick the ratio you like (e.g., 4/3) */
+  object-fit: contain;         /* crops to the ratio while filling */
+  display: block;
+}
+
+/* Push title to the bottom of the card */
+.project-card h2 {
+  margin: 0;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: auto;          /* this pins it to the bottom */
+}
+
+/* Optional: clamp long titles to two lines so heights match even better */
+.project-card h2 {
+    /* Standard property */
+  line-clamp: 2;
+
+  /* Legacy/WebKit fallback */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  overflow: hidden; /* ensures content is clipped */
+
+  line-height: 1.2;
+  min-height: calc(1.2em * 2); /* ensure consistent height for two lines */
+}
+
+
+/* 4. Responsive Text Scaling */
+@media (max-width: 600px) {
+  .hero-overlay h1 { font-size: 2rem; }
+  .hero-overlay p  { font-size: 1rem; }
+}
+
+@media (min-width: 1024px) {
+  .hero { background-position: 50% 80%; } /* adjust to taste */
+}
+
+/* 5. Specific styles for project pages */
+body.page-project-white { background-color: #fff; }
+
+/* 6. Footer styles */ 
+  .site-footer {
+  /* background: #fff; */ /* no background change */
+  color: #fff;                 /* white text */
+  padding: 1rem 2rem;
+  text-align: left;
+  border-top: 1px solid rgba(0,0,0,0.08); /* optional subtle divider */
+}
+
+/* make footer links white too */
+.site-footer a { color: inherit; }
+
+/* optional: a tiny shadow helps legibility on light greys */
+.site-footer { text-shadow: 0 1px 2px rgba(0,0,0,.25); }

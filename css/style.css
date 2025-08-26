@@ -1,6 +1,41 @@
 /* 1. Reset & Base */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: sans-serif; line-height: 1.6; background-color: #242424; }
+
+/* NEW: repeating background pattern (put a small seamless tile at /images/pattern.png) */
+:root {
+  --pattern-size: 128px;    /* adjust to your tile size */
+}
+body {
+  font-family: sans-serif;
+  line-height: 1.6;
+  background-color: #242424;
+
+  /* NEW: periodic pattern */
+  background-image: url("../images/webpage_background.jpeg");
+  background-repeat: repeat;
+  background-size: var(--pattern-size) var(--pattern-size);
+  background-attachment: fixed; /* optional subtle parallax */
+}
+
+/* Optional: if you have a @2x tile */
+@supports (background-image: image-set(url("") 1x)) {
+  body {
+    background-image: image-set(
+      url("../images/webpage_background.jpeg") 1x,
+      url("../images/webpage_background@2x.jpeg") 2x
+    );
+  }
+}
+
+/* (Optional) add a very subtle tint over the pattern for readability */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  /* darken slightly; reduce the 0.35 if you want the pattern stronger */
+  background: rgba(0,0,0,0.35);
+}
 
 /* 2. Hero */
 .hero {
@@ -12,12 +47,13 @@ body { font-family: sans-serif; line-height: 1.6; background-color: #242424; }
   background-position: 50% 80%;      /* adjust the visible area (try 50% 20–35%) */
   background-repeat: no-repeat;
 
-  /* scale height closer to 16:9 on wide screens, but cap it */
-  height: clamp(320px, 56.25vw, 70vh);
+  /* CHANGED: make hero smaller on large screens; keep comfortable on mobile */
+  height: clamp(280px, 42vw, 60vh);
 
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 2rem 1rem; /* NEW: mild padding so overlay isn’t cramped */
 }
 
 .hero-overlay {
@@ -36,7 +72,9 @@ body { font-family: sans-serif; line-height: 1.6; background-color: #242424; }
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  padding: 2rem;
+
+  /* CHANGED: trim top padding so cards sit higher under the hero */
+  padding: 1.25rem 2rem 2rem;
   align-items: stretch; /* key */
 }
 
@@ -63,7 +101,7 @@ body { font-family: sans-serif; line-height: 1.6; background-color: #242424; }
 .project-card img.thumb {
   width: 100%;
   aspect-ratio: 16 / 9;      /* pick the ratio you like (e.g., 4/3) */
-  object-fit: contain;         /* crops to the ratio while filling */
+  object-fit: contain;       /* NOTE: 'contain' shows full image; switch to 'cover' if you prefer crop */
   display: block;
 }
 
@@ -78,7 +116,7 @@ body { font-family: sans-serif; line-height: 1.6; background-color: #242424; }
 
 /* Optional: clamp long titles to two lines so heights match even better */
 .project-card h2 {
-    /* Standard property */
+  /* Standard property */
   line-clamp: 2;
 
   /* Legacy/WebKit fallback */
@@ -99,15 +137,21 @@ body { font-family: sans-serif; line-height: 1.6; background-color: #242424; }
   .hero-overlay p  { font-size: 1rem; }
 }
 
+/* CHANGED: at desktop, make hero even shorter so cards show above the fold */
 @media (min-width: 1024px) {
-  .hero { background-position: 50% 80%; } /* adjust to taste */
+  .hero {
+    background-position: 50% 80%; /* adjust to taste */
+    height: min(32vh, 420px);
+    padding-block: 1.5rem;
+  }
+  .projects-grid { padding-top: 1rem; } /* keep cards tight to hero */
 }
 
 /* 5. Specific styles for project pages */
 body.page-project-white { background-color: #fff; }
 
-/* 6. Footer styles */ 
-  .site-footer {
+/* 6. Footer styles */
+.site-footer {
   /* background: #fff; */ /* no background change */
   color: #fff;                 /* white text */
   padding: 1rem 2rem;

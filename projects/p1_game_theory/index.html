@@ -31,87 +31,180 @@
   <script src="https://d3js.org/d3.v7.js"></script>
   <script src="./js/draw_line_chart.js"></script>
   
-</head>
-<body class="page-project-white">
-  <nav><a href="../..">← Back to Home</a></nav>
+  <style>
+    :root { --w: 540px; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; line-height: 1.4; margin: 24px; }
+    h1 { margin: 0 0 4px; font-size: 1.6rem; }
+    h2 { margin: 0 0 16px; font-weight: 500; font-size: 1.1rem; color: #444; }
+    fieldset { max-width: var(--w); border: 1px solid #ddd; border-radius: 10px; padding: 12px 14px; }
+    legend { padding: 0 6px; color: #333; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; }
+    label { font-size: .95rem; color: #333; }
+    input[type="number"] { padding: 6px 8px; }
+    .actions { margin-top: 12px; }
+    button { padding: 8px 14px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
+    button:hover { background: #f6f6f6; }
+    #chartArea { margin-top: 18px; }
+  </style>
+ 
 
-  
+</head>
+<body>
 
   <main>
-
     <h1>Hello Renaud!</h1>
-    <h2>
-      Nature in Code<br>
-      Chapter 8: Cooperation: Good Guys Can Finish First.
-    </h2>
+    <h2>Nature in Code — Chapter 8: Cooperation: Good Guys Can Finish First.</h2>
 
-    <!-- 1) Dropdown + Reload button -->
-    <label for="demoSelector">Choose demo:</label>
-    <select id="demoSelector">
-      <option value="p1">Cooperators vs Defectors</option>
-      <option value="p2">Tit for Tat</option>
-      <option value="p3">Win-Stay, Lose-Shift</option>
-      <option value="all">All</option>
-    </select>
-    <button id="reloadButton">Reload</button>
+    <!-- Which simulations to load -->
+    <fieldset>
+      <legend>Which simulations?</legend>
+      <label style="display:block; margin:.25rem 0;">
+        <input id="chkP1" type="checkbox" checked> Part 1 — Cooperators vs Defectors (script_p1.js)
+      </label>
+      <label style="display:block; margin:.25rem 0;">
+        <input id="chkP2" type="checkbox" checked> Part 2 — Tit for Tat (script_p2.js)
+      </label>
+      <label style="display:block; margin:.25rem 0;">
+        <input id="chkP3" type="checkbox" checked> Part 3 — Win-Stay, Lose-Shift (script_p3.js)
+      </label>
+    </fieldset>
 
-    <!-- 2) Chart container (not strictly required since your scripts append to <body>, 
-          but handy if you refactor later) -->
+    <!-- Parameter inputs -->
+    <fieldset style="margin-top: 12px;">
+      <legend>Simulation settings</legend>
+
+      <div class="grid">
+        <label for="inputC">c</label>
+        <input id="inputC" type="number" step="any" value="1">
+
+        <label for="inputB">b</label>
+        <input id="inputB" type="number" step="any" value="4">
+
+        <label for="inputPopulation">population_size</label>
+        <input id="inputPopulation" type="number" step="1" min="1" value="100">
+
+        <label for="inputSteps">number_of_time_steps</label>
+        <input id="inputSteps" type="number" step="1" min="1" value="1000">
+
+        <label for="inputMutation">mutation_rate</label>
+        <input id="inputMutation" type="number" step="any" min="0" value="0.001">
+
+        <label for="inputGameRepeats">game_repeats (only part 2)</label>
+        <input id="inputGameRepeats" type="number" step="any" min="0" value="100">
+
+        <label for="inputErrorRate">error_rate (only part 3)</label>
+        <input id="inputErrorRate" type="number" step="any" min="0" value="0.002">
+      </div>
+
+      <p style="font-size:.9rem; color:#555; margin:.5rem 0 0;">
+        Defaults: c=1, b=4, population_size=100, number_of_time_steps=1000, mutation_rate=0.001, game_repeats=100 (only part 2), error_rate=0.002 (only part 3).
+      </p>
+    </fieldset>
+
+    <!-- Single control button -->
+    <div class="actions">
+      <button id="reloadButton">Reload</button>
+    </div>
+
+    <!-- Optional container if your scripts want to attach charts here -->
     <div id="chartArea"></div>
-
-    <!-- 3) Loader logic -->
-    <script>
-    (function() {
-      const demoMap = {
-        p1: './js/script_p1.js',
-        p2: './js/script_p2.js',
-        p3: './js/script_p3.js'
-      };
-
-      function clearCharts() {
-        // remove every chart SVG
-        document.querySelectorAll('svg').forEach(el => el.remove());
-        // remove every <p> inserted by your scripts
-        document.querySelectorAll('body > p').forEach(el => el.remove());
-        // remove previously injected demo scripts
-        document.querySelectorAll('[data-demo-script]').forEach(s => s.remove());
-      }
-
-      function loadDemo(src) {
-        return new Promise((resolve, reject) => {
-          const tag = document.createElement('script');
-          tag.src = src;
-          tag.setAttribute('data-demo-script', '');
-          tag.onload  = () => resolve();
-          tag.onerror = () => reject(new Error(`Failed to load ${src}`));
-          document.body.appendChild(tag);
-        });
-      }
-
-      async function runSelection() {
-        clearCharts();
-        const choice = document.getElementById('demoSelector').value;
-        const toLoad = choice === 'all'
-          ? Object.values(demoMap)
-          : [ demoMap[choice] ];
-
-        for (const src of toLoad) {
-          await loadDemo(src);
-        }
-      }
-
-      window.addEventListener('DOMContentLoaded', () => {
-        // wire up both controls *after* they exist in the DOM
-        document.getElementById('demoSelector')
-                .addEventListener('change', runSelection);
-        document.getElementById('reloadButton')
-                .addEventListener('click', runSelection);
-
-        // run the default selection on page load
-        runSelection();
-      });
-    })();
-    </script>
   </main>
+
+  <!-- Loader logic -->
+  <script>
+  (function () {
+    // Update these paths if your scripts are in ./js/
+    const demoMap = {
+      p1: './js/script_p1.js',
+      p2: './js/script_p2.js',
+      p3: './js/script_p3.js'
+    };
+
+    function clearOldOutputs() {
+      // Remove charts (SVGs) and the <p> notes your scripts add at body level
+      document.querySelectorAll('svg').forEach(el => el.remove());
+      document.querySelectorAll('body > p').forEach(el => el.remove());
+      // Remove previously injected simulation scripts (but NOT global libs)
+      document.querySelectorAll('[data-demo-script]').forEach(s => s.remove());
+    }
+
+    function getNumeric(id, fallback) {
+      const v = Number(document.getElementById(id).value);
+      return Number.isFinite(v) ? v : fallback;
+    }
+
+    function collectSimConfig() {
+      return {
+        c: getNumeric('inputC', 1),
+        b: getNumeric('inputB', 4),
+        population_size: Math.max(1, Math.floor(getNumeric('inputPopulation', 100))),
+        number_of_time_steps: Math.max(1, Math.floor(getNumeric('inputSteps', 1000))),
+        mutation_rate: getNumeric('inputMutation', 0.001),
+        number_of_game_repeats: Math.max(1, Math.floor(getNumeric('inputGameRepeats', 100))),
+        error_rate: getNumeric('inputErrorRate', 0.002)
+      };
+    }
+
+    function collectSelection() {
+      const sel = [];
+      if (document.getElementById('chkP1')?.checked) sel.push('p1');
+      if (document.getElementById('chkP2')?.checked) sel.push('p2');
+      if (document.getElementById('chkP3')?.checked) sel.push('p3');
+      return sel;
+    }
+
+    // Wait until draw_line_chart is available (poll up to ~2s)
+    function waitForChartHelper(timeoutMs = 2000, intervalMs = 50) {
+      return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const tick = () => {
+          if (typeof window.draw_line_chart === 'function') return resolve();
+          if (Date.now() - start >= timeoutMs) return reject(new Error('draw_line_chart is not available'));
+          setTimeout(tick, intervalMs);
+        };
+        tick();
+      });
+    }
+
+    function loadDemo(src) {
+      return new Promise((resolve, reject) => {
+        const tag = document.createElement('script');
+        tag.src = src;
+        // Dynamically-inserted scripts execute immediately on load
+        tag.async = false;
+        tag.setAttribute('data-demo-script', '');
+        tag.onload  = () => resolve();
+        tag.onerror = () => reject(new Error('Failed to load ' + src));
+        document.body.appendChild(tag);
+      });
+    }
+
+    async function runSelectedOnReload() {
+      clearOldOutputs();
+
+      // Make config globally available to all simulation files
+      window.simConfig = collectSimConfig();
+
+      // Ensure the chart helper is ready BEFORE any simulation runs
+      try {
+        await waitForChartHelper();
+      } catch (e) {
+        console.error(e);
+        alert('The chart library is not loaded yet. Check that D3 and draw_line_chart.js are included.');
+        return;
+      }
+
+      const selected = collectSelection().map(k => demoMap[k]).filter(Boolean);
+      for (const src of selected) {
+        await loadDemo(src); // each script runs once on load and calls draw_line_chart(...)
+      }
+    }
+
+    // Only run when Reload is clicked (no auto-run on page load)
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('reloadButton').addEventListener('click', runSelectedOnReload);
+    });
+  })();
+  </script>
 </body>
 </html>

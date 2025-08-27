@@ -11,7 +11,7 @@ body {
   background-color: #242424;
 
   /* NEW: periodic pattern */
-  background-image: url("../images/webpage_background.jpeg");
+  background-image: url('../images/webpage_background.jpeg');
   background-repeat: repeat;
   background-size: var(--pattern-size) var(--pattern-size);
   background-attachment: fixed; /* optional subtle parallax */
@@ -21,8 +21,8 @@ body {
 @supports (background-image: image-set(url("") 1x)) {
   body {
     background-image: image-set(
-      url("../images/webpage_background.jpeg") 1x,
-      url("../images/webpage_background@2x.jpeg") 2x
+      url('../images/webpage_background.jpeg') 1x,
+      url('../images/webpage_background@2x.jpeg') 2x
     );
   }
 }

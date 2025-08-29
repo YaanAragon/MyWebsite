@@ -150,6 +150,25 @@ body::before {
 /* 5. Specific styles for project pages */
 body.page-project-white { background-color: #fff; }
 
+/* Force truly white pages */
+body.page-project-white {
+  /* reset ALL background layers in one go */
+  background: #fff none !important;
+}
+
+/* If image-set is supported, keep the override too */
+@supports (background-image: image-set(url("") 1x)) {
+  body.page-project-white {
+    background: #fff none !important;
+  }
+}
+
+/* Remove the dark tint overlay */
+body.page-project-white::before {
+  content: none !important;
+}
+
+
 /* 6. Footer styles */
 .site-footer {
   /* background: #fff; */ /* no background change */

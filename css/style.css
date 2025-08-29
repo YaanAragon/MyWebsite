@@ -22,7 +22,7 @@ body {
   body {
     background-image: image-set(
       url('../images/webpage_background.jpeg') 1x,
-      url('../images/webpage_background@2x.jpeg') 2x
+      url('../images/webpage_background.jpeg') 2x
     );
   }
 }
@@ -34,7 +34,7 @@ body::before {
   inset: 0;
   pointer-events: none;
   /* darken slightly; reduce the 0.35 if you want the pattern stronger */
-  background: rgba(0,0,0,0.35);
+  /* background: rgba(0,0,0,0.35); */
 }
 
 /* 2. Hero */

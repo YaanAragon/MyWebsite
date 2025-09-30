@@ -1,179 +1,178 @@
-<!doctype html>
-<html lang="en" data-theme="light">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hong Kong Network Analysis — Roads & MTR</title>
-    <meta name="description" content="IB portfolio page: Hong Kong road and metro network analysis with OSMnx & NetworkX (centrality, stats, and routing).">
-    <link rel="stylesheet" href="styles.css" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hong Kong Road Network — Centrality Measures (UCL Work Experience)</title>
+  <link rel="stylesheet" href="css/hong-kong-roads.css" />
+  <meta name="description" content="Summary of a UCL work-experience project analysing Hong Kong's road network with OSMnx & NetworkX, including centrality measures and shortest paths." />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="badge" href="https://aragon.org.uk/index.html">↩ Home</a>
+      <a class="badge" href="https://github.com/YaanAragon/Hong_Kong_network" target="_blank">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+       viewBox="0 0 16 16" style="vertical-align: text-bottom; margin-right:6px;">
+    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 
+    2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+    0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23
+    -.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01
+    1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28
+    -.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+    0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08
+    -2.12 0 0 .67-.21 2.2.82a7.54 7.54 0 0 1 
+    2-.27c.68 0 1.36.09 2 .27 1.53-1.04 
+    2.2-.82 2.2-.82.44 1.1.16 1.92.08 
+    2.12.51.56.82 1.27.82 2.15 
+    0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 
+    1.48 0 1.07-.01 1.93-.01 2.2 
+    0 .21.15.46.55.38A8.01 8.01 0 0 0 16 
+    8c0-4.42-3.58-8-8-8z"/>
+  </svg>
+  GitHub Repo
+</a>
+      <h1>Hong Kong Road Network</h1>
+      <p class="subtitle">Centrality measures &amp; routing — UCL work-experience project</p>
+    </div>
+    <div class="hero">
+      <img src="images/HK nodes.png" alt="Hong Kong road network graph rendered as white nodes and edges on a black background" />
+    </div>
+  </header>
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <main class="wrap">
+    <section class="intro card">
+      <h2>What I did</h2>
+      <p>
+        I used <strong>OSMnx</strong> to download Hong Kong’s road graph from OpenStreetMap and analysed it with
+        <strong>NetworkX</strong>. I explored how different <em>centrality</em> measures (degree, betweenness and closeness)
+        highlight important streets and junctions, and I tested shortest‑path routing on the network.
+      </p>
+      <ul class="pills">
+        <li>Area: Hong Kong (road network)</li>
+        <li>Libraries: OSMnx, NetworkX, Pandas, Matplotlib, NumPy</li>
+        <li>Skills: data wrangling, graph analysis, visualisation</li>
+      </ul>
+    </section>
 
-    <!-- Font -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
-  </head>
-  <body>
-    <header class="nav">
-      <div class="brand">
-        <div class="logo"></div>
-        <h1>Hong Kong Network Analysis</h1>
-        <span class="chip">IB Diploma</span>
-      </div>
-      <div class="nav-actions">
-        <a class="btn ghost" href="https://github.com/YaanAragon/Hong_Kong_network/tree/main" target="_blank" rel="noreferrer">
-          View GitHub repo
-        </a>
-        <button id="themeToggle" class="toggle" aria-label="Toggle theme">🌙</button>
-      </div>
-    </header>
+    <section class="grid-two">
+      <article class="card">
+        <h3>Data &amp; tools</h3>
+        <p>
+          OSMnx let me query OpenStreetMap for Hong Kong’s drivable network and turn it into a directed multigraph.
+          With NetworkX I computed metrics and paths; Pandas helped with tidy tables; Matplotlib handled plots.
+        </p>
+        <pre class="code">import osmnx as ox
+import networkx as nx
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt</pre>
+      </article>
 
-    <main class="wrap">
-      <section class="hero card pad">
-        <div class="grid hero-grid">
-          <div>
-            <h2>Quantifying Hong Kong’s <span class="highlight">roads</span> & <span class="highlight">MTR</span> with OSMnx + NetworkX</h2>
-            <p>
-              This page summarizes my analysis from two notebooks:
-              <em>RoadNetwork.ipynb</em> (street graph & basic stats) and <em>logbook.ipynb</em> (project log & practice),
-              including centrality measures and shortest-path routing. Try the interactive demo below with your own
-              exported GeoJSON files.
-            </p>
-            <div class="kpis">
-              <div class="kpi"><h3>Place</h3><p>Hong Kong SAR</p></div>
-              <div class="kpi"><h3>Libraries</h3><p>OSMnx • NetworkX • GeoPandas</p></div>
-              <div class="kpi"><h3>Metrics</h3><p>basic_stats • degree • betweenness</p></div>
-              <div class="kpi"><h3>Demo</h3><p>Color-by-metric • Routing</p></div>
-            </div>
-          </div>
-          <div class="card pad">
-            <h3>Export from your notebooks</h3>
-<pre class="code">
-# Roads graph G_roads (drive network)
-nodes_roads, edges_roads = ox.graph_to_gdfs(G_roads)
-nodes_roads.to_file("nodes.geojson", driver="GeoJSON")
-edges_roads.to_file("edges.geojson", driver="GeoJSON")
+      <article class="card">
+        <h3>Workflow</h3>
+        <ol class="steps">
+          <li><span>Download</span> the road graph for Hong Kong with OSMnx.</li>
+          <li><span>Clean</span> and simplify edges; ensure one giant connected component for analysis.</li>
+          <li><span>Compute</span> centrality: degree, betweenness, closeness.</li>
+          <li><span>Route</span> between points using Dijkstra on edge lengths.</li>
+          <li><span>Visualise</span> the results as high‑contrast maps.</li>
+        </ol>
+      </article>
+    </section>
 
-# MTR graph G_mtr (subway filter), with betweenness centrality on nodes (e.g., "bc")
-# bc = nx.betweenness_centrality(ox.convert.to_digraph(G_mtr), weight="length")
-# nx.set_node_attributes(G_mtr, bc, "bc")
-mtr_nodes, mtr_edges = ox.graph_to_gdfs(G_mtr)
-mtr_nodes.to_file("mtr_nodes.geojson", driver="GeoJSON")
-mtr_edges.to_file("mtr_edges.geojson", driver="GeoJSON")
-</pre>
-            <p class="muted">Any numeric column (e.g., <code>length</code>, <code>bc</code>, degree-based fields) can be visualized.</p>
-          </div>
+    <section class="card">
+      <h2>Centrality — quick explainer</h2>
+      <div class="grid-three">
+        <div class="mini-card">
+          <h4>Degree</h4>
+          <p>How many edges meet at a node. Busy junctions score higher.</p>
         </div>
-      </section>
+        <div class="mini-card">
+          <h4>Betweenness</h4>
+          <p>Nodes/streets that sit on lots of shortest paths. Good for spotting potential bottlenecks.</p>
+        </div>
+        <div class="mini-card">
+          <h4>Closeness</h4>
+          <p>How near a node is to all others, on average. Useful for overall accessibility.</p>
+        </div>
+      </div>
+    </section>
 
-      <section class="section card pad">
-        <h3>What I did (brief)</h3>
+    <section class="gallery card">
+      <h2>Selected visuals</h2>
+      <figure class="shot">
+        <img src="images/HK nodes.png" alt="Hong Kong network — white nodes and edges on black background" />
+        <figcaption>Extracted Hong Kong road network (OSMnx).</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <img src="images/Shortest_path_London.png" alt="Shortest path example drawn in red over a monochrome basemap" />
+        <figcaption>Shortest‑path demo on a dense urban network.</figcaption>
+      </figure>
+
+      <figure class="shot">
+        <img src="images/weighted_network_graph.png" alt="Small weighted network diagram showing edge weights" />
+        <figcaption>Toy weighted graph for testing and explaining metrics.</figcaption>
+      </figure>
+    </section>
+
+    <section class="grid-two">
+      <article class="card">
+        <h3>What worked</h3>
         <ul>
-          <li>Built a drivable **street graph** of Hong Kong with OSMnx; ran <code>ox.basic_stats(G)</code> (incl. circuity).</li>
-          <li>Built an **MTR (subway) graph** using a custom OSM filter; computed **betweenness centrality** (weighted by <code>length</code>).</li>
-          <li>Explored **degree centrality** (normalized visualization) and **shortest paths** with <code>nx.shortest_path</code>.</li>
-          <li>Packaged results into interactive visuals to communicate insights.</li>
+          <li>Got a clean Hong Kong road graph and produced high‑contrast visuals.</li>
+          <li>Ran degree, betweenness and closeness on sample networks.</li>
+          <li>Implemented shortest‑path routing and inspected the path geometry.</li>
         </ul>
-        <p class="muted">Repo: <a href="https://github.com/YaanAragon/Hong_Kong_network/tree/main" target="_blank" rel="noreferrer">YaanAragon/Hong_Kong_network</a></p>
-      </section>
+      </article>
+      <article class="card">
+        <h3>Challenges</h3>
+        <ul>
+          <li>Incomplete transit line in a separate subway test graph led to layout issues (node positions).</li>
+          <li>Needed careful handling of node positions for consistent plotting.</li>
+          <li>Some tasks depended on internet access to fetch data.</li>
+        </ul>
+      </article>
+    </section>
 
-      <section class="section">
-        <div class="tabs card">
-          <div class="tab-header">
-            <button class="tab-btn active" data-tab="roads">Roads</button>
-            <button class="tab-btn" data-tab="mtr">MTR</button>
-          </div>
+    <section class="card learnings">
+      <h2>What I learnt</h2>
+      <ul>
+        <li>How to use OSMnx to build real‑world street graphs and simplify them.</li>
+        <li>How different centrality measures emphasise different “importance”.</li>
+        <li>How to route with weighted shortest paths in NetworkX.</li>
+        <li>Better Python + plotting skills and debugging with small toy graphs.</li>
+      </ul>
+    </section>
 
-          <!-- Roads tab -->
-          <div class="tab-panel active" id="tab-roads">
-            <div class="map-wrap">
-              <div id="mapRoads" class="map card"></div>
-              <aside class="panel card pad">
-                <h4>Roads — Data & styling</h4>
-                <div class="row">
-                  <label>Edges (GeoJSON)</label>
-                  <input id="roadsEdgesFile" type="file" accept=".geojson,.json,application/geo+json" />
-                  <label>Nodes (GeoJSON)</label>
-                  <input id="roadsNodesFile" type="file" accept=".geojson,.json,application/geo+json" />
-                  <button id="roadsLoadBtn" class="btn brand">Load uploaded data</button>
-                  <button id="roadsSampleBtn" class="btn">Load tiny sample</button>
-                </div>
+    <section class="card">
+      <h2>Tech notes</h2>
+      <p class="small">
+        This project is summarised from two Jupyter notebooks (“RoadNetwork.ipynb” and a day‑by‑day logbook). The page avoids going beyond those topics and keeps to
+        road‑graph extraction, centrality (degree/betweenness/closeness), routing, and visualisation.
+      </p>
+    </section>
+  
+    <section class="card">
+      <h2>See more</h2>
+      <p>
+        The full Jupyter notebooks for this project are available on GitHub:
+        <a href="https://github.com/YaanAragon/Hong_Kong_network" target="_blank">
+          github.com/YaanAragon/Hong_Kong_network
+        </a>.
+      </p>
+    </section>
 
-                <div class="row">
-                  <label>Colour edges by</label>
-                  <select id="roadsPropSelect"><option value="length">length</option></select>
-                  <div class="legend"><span id="roadsLegendMin">min</span><div class="bar"></div><span id="roadsLegendMax">max</span></div>
-                </div>
+  </main>
 
-                <h4>Routing</h4>
-                <div class="row">
-                  <button id="roadsPickStart" class="btn">Pick start node</button>
-                  <button id="roadsPickEnd" class="btn">Pick end node</button>
-                  <button id="roadsRouteBtn" class="btn brand">Shortest path</button>
-                  <button id="roadsClearBtn" class="btn">Clear</button>
-                </div>
+  <footer class="site-footer wrap">
+    <p>© <span id="y"></span> — STEM Projects · Built with Python, OSMnx &amp; NetworkX</p>
+  </footer>
 
-                <div class="grid2 kpi-grid">
-                  <div class="kpi"><h3>Nodes</h3><p id="roadsNodesCount">–</p></div>
-                  <div class="kpi"><h3>Edges</h3><p id="roadsEdgesCount">–</p></div>
-                  <div class="kpi"><h3>Total length (km)</h3><p id="roadsTotalLen">–</p></div>
-                  <div class="kpi"><h3>Avg degree</h3><p id="roadsAvgDeg">–</p></div>
-                </div>
-              </aside>
-            </div>
-          </div>
-
-          <!-- MTR tab -->
-          <div class="tab-panel" id="tab-mtr">
-            <div class="map-wrap">
-              <div id="mapMTR" class="map card"></div>
-              <aside class="panel card pad">
-                <h4>MTR — Data & styling</h4>
-                <div class="row">
-                  <label>MTR Edges (GeoJSON)</label>
-                  <input id="mtrEdgesFile" type="file" accept=".geojson,.json,application/geo+json" />
-                  <label>MTR Nodes (GeoJSON)</label>
-                  <input id="mtrNodesFile" type="file" accept=".geojson,.json,application/geo+json" />
-                  <button id="mtrLoadBtn" class="btn brand">Load uploaded data</button>
-                  <button id="mtrSampleBtn" class="btn">Load tiny sample</button>
-                </div>
-
-                <div class="row">
-                  <label>Colour nodes by</label>
-                  <select id="mtrNodePropSelect"><option value="bc">bc</option></select>
-                  <div class="legend"><span id="mtrLegendMin">min</span><div class="bar"></div><span id="mtrLegendMax">max</span></div>
-                </div>
-
-                <div class="grid2 kpi-grid">
-                  <div class="kpi"><h3>Stations</h3><p id="mtrNodesCount">–</p></div>
-                  <div class="kpi"><h3>Segments</h3><p id="mtrEdgesCount">–</p></div>
-                </div>
-                <p class="muted">Tip: populate nodes with a betweenness field (e.g., <code>bc</code>) as in your notebook.</p>
-              </aside>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section card pad">
-        <h3>Method snapshots</h3>
-        <div class="gallery">
-          <div class="ph">OSMnx street graph & basic_stats</div>
-          <div class="ph">MTR betweenness centrality (bc)</div>
-          <div class="ph">Shortest path (length-weighted)</div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="wrap">
-      <small>
-        Built for my IB Diploma portfolio. Source: 
-        <a href="https://github.com/YaanAragon/Hong_Kong_network/tree/main" target="_blank" rel="noreferrer">YaanAragon/Hong_Kong_network</a>.
-      </small>
-    </footer>
-
-    <script src="app.js"></script>
-  </body>
+  <script>
+    // tiny JS: current year
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
 </html>

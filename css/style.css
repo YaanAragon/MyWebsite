@@ -1,185 +1,153 @@
-/* 1. Reset & Base */
+/* 1) Reset & Base */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* NEW: repeating background pattern (put a small seamless tile at /images/pattern.png) */
-:root {
-  --pattern-size: 128px;    /* adjust to your tile size */
+:root{
+  --bg: #0b1020;
+  --text: #e7e9ef;
+  --muted: #b9bfd1;
+  --card: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.12);
+  --accent: #8cd1ff;
+  --accent-2: #c4a8ff;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.45), inset 0 0 0 1px var(--border);
+  --wrap: min(1100px, 92vw);
+  --grid-gap: 1.2rem;
 }
-body {
-  font-family: sans-serif;
+
+body{
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
   line-height: 1.6;
-  background-color: #242424;
-
-  /* NEW: periodic pattern */
-  background-image: url('../images/webpage_background.jpeg');
-  background-repeat: repeat;
-  background-size: var(--pattern-size) var(--pattern-size);
-  background-attachment: fixed; /* optional subtle parallax */
+  color: var(--text);
+  background: radial-gradient(1200px 800px at 10% 0%, #0f1630 0%, #0b1020 45%, #090d19 100%),
+              url('../images/webpage_background.jpeg') repeat;
+  background-size: auto, 128px 128px;
+  background-attachment: fixed;
 }
 
-/* Optional: if you have a @2x tile */
-@supports (background-image: image-set(url("") 1x)) {
-  body {
-    background-image: image-set(
-      url('../images/webpage_background.jpeg') 1x,
-      url('../images/webpage_background.jpeg') 2x
-    );
+/* Optional tint over the pattern for readability */
+/*
+body::before{
+  content:"";
+  position: fixed; inset: 0; pointer-events:none;
+  background: rgba(0,0,0,.28);
+}
+*/
+
+/* 2) Hero */
+.hero{
+  position: relative;
+  background-image: url('../images/hero.jpg');
+  background-size: cover;
+  background-position: 50% 80%;
+  background-repeat: no-repeat;
+  height: clamp(280px, 42vw, 52vh);
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.hero-overlay{
+  background: linear-gradient(180deg, rgba(10,13,25,0.7), rgba(10,13,25,0.45));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+  backdrop-filter: blur(6px) saturate(1.1);
+}
+.hero-overlay h1{
+  font-weight: 700;
+  font-size: clamp(28px, 4.6vw, 40px);
+  letter-spacing: .2px;
+}
+.hero-overlay p{
+  color: var(--muted);
+  margin-top: .35rem;
+  font-size: clamp(14px, 2.3vw, 18px);
+}
+
+/* 3) Projects — container + grid */
+/* Wrap centers the grid and limits width; grid enforces max two columns on desktop */
+.projects-wrap{
+  width: var(--wrap);
+  margin: 0 auto;
+  padding: 1.25rem 0 2rem;
+}
+.projects-grid{
+  display: grid;
+  gap: var(--grid-gap);
+
+  /* Mobile-first: single column */
+  grid-template-columns: 1fr;
+}
+
+/* From ~700px up: two columns, and never more than 2 */
+@media (min-width: 700px){
+  .projects-grid{
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    justify-content: center;
   }
 }
 
-/* (Optional) add a very subtle tint over the pattern for readability */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  /* darken slightly; reduce the 0.35 if you want the pattern stronger */
-  /* background: rgba(0,0,0,0.35); */
-}
-
-/* 2. Hero */
-.hero {
-  position: relative;
-
-  /* same image, but break out the shorthand so we can tweak it */
-  background-image: url('../images/hero.jpg');
-  background-size: cover;            /* fill the box */
-  background-position: 50% 80%;      /* adjust the visible area (try 50% 20–35%) */
-  background-repeat: no-repeat;
-
-  /* CHANGED: make hero smaller on large screens; keep comfortable on mobile */
-  height: clamp(280px, 42vw, 60vh);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem; /* NEW: mild padding so overlay isn’t cramped */
-}
-
-.hero-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  text-align: center;
-  padding: 1rem;
-  border-radius: 8px;
-}
-.hero-overlay h1 { font-size: 2.5rem; }
-.hero-overlay p { font-size: 1.2rem; margin-top: 0.5rem; }
-
-/* 3. Projects Grid */
-/* Grid: make items stretch so cards can be equal height per row */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-
-  /* CHANGED: trim top padding so cards sit higher under the hero */
-  padding: 1.25rem 2rem 2rem;
-  align-items: stretch; /* key */
-}
-
-/* Card becomes a column flexbox */
-.project-card {
+/* 4) Project Card */
+.project-card{
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  background: #fff;          /* keep it white on grey background */
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  height: 100%;              /* fill the grid track height */
+  box-shadow: var(--shadow);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  min-height: 100%;
 }
-
-.project-card:hover {
+.project-card:hover,
+.project-card:focus-visible{
   transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.18);
+  outline: none;
 }
 
-/* Normalize thumbnail height with cropping for consistency */
-.project-card img.thumb {
+/* Thumbnail: consistent aspect, cover for a modern look */
+.project-card .thumb{
   width: 100%;
-  aspect-ratio: 16 / 9;      /* pick the ratio you like (e.g., 4/3) */
-  object-fit: contain;       /* NOTE: 'contain' shows full image; switch to 'cover' if you prefer crop */
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
   display: block;
+  background: #000; /* in case image fails to load */
 }
 
-/* Push title to the bottom of the card */
-.project-card h2 {
+/* Title block pinned at bottom with subtle top divider */
+.project-card h2{
   margin: 0;
-  padding: 0.75rem;
-  font-size: 1.1rem;
-  text-align: center;
-  margin-top: auto;          /* this pins it to the bottom */
-}
+  padding: .9rem 1rem;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  color: var(--text);
+  border-top: 1px solid var(--border);
 
-/* Optional: clamp long titles to two lines so heights match even better */
-.project-card h2 {
-  /* Standard property */
-  line-clamp: 2;
-
-  /* Legacy/WebKit fallback */
+  /* clamp long titles to 2 lines */
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-
-  overflow: hidden; /* ensures content is clipped */
-
-  line-height: 1.2;
-  min-height: calc(1.2em * 2); /* ensure consistent height for two lines */
+  overflow: hidden;
+  min-height: calc(1.25em * 2);
 }
 
-
-/* 4. Responsive Text Scaling */
-@media (max-width: 600px) {
-  .hero-overlay h1 { font-size: 2rem; }
-  .hero-overlay p  { font-size: 1rem; }
-}
-
-/* CHANGED: at desktop, make hero even shorter so cards show above the fold */
-@media (min-width: 1024px) {
-  .hero {
-    background-position: 50% 80%; /* adjust to taste */
-    height: min(32vh, 420px);
-    padding-block: 1.5rem;
-  }
-  .projects-grid { padding-top: 1rem; } /* keep cards tight to hero */
-}
-
-/* 5. Specific styles for project pages */
-body.page-project-white { background-color: #fff; }
-
-/* Force truly white pages */
-body.page-project-white {
-  /* reset ALL background layers in one go */
-  background: #fff none !important;
-}
-
-/* If image-set is supported, keep the override too */
-@supports (background-image: image-set(url("") 1x)) {
-  body.page-project-white {
-    background: #fff none !important;
-  }
-}
-
-/* Remove the dark tint overlay */
-body.page-project-white::before {
-  content: none !important;
-}
-
-
-/* 6. Footer styles */
-.site-footer {
-  /* background: #fff; */ /* no background change */
-  color: #fff;                 /* white text */
+/* 5) Footer */
+.site-footer{
+  color: var(--muted);
   padding: 1rem 2rem;
   text-align: left;
-  border-top: 1px solid rgba(0,0,0,0.08); /* optional subtle divider */
+  border-top: 1px solid var(--border);
 }
 
-/* make footer links white too */
-.site-footer a { color: inherit; }
-
-/* optional: a tiny shadow helps legibility on light greys */
-.site-footer { text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+/* 6) Extra polish on very large screens */
+@media (min-width: 1200px){
+  .hero{ height: min(34vh, 420px); }
+  .projects-wrap{ padding-top: 1rem; }
+}

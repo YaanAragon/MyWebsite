@@ -2,118 +2,132 @@
 <html lang="en">
 <head>
   <!-- Cookiebot (must be first in <head>) -->
-<script id="Cookiebot"
-  src="https://consent.cookiebot.com/uc.js"
-  data-cbid="0a9e2c4e-c6d5-4b71-9e14-b4fdc20c48b8"
-  data-blockingmode="auto"
-  type="text/javascript">
-</script>
+  <script id="Cookiebot"
+    src="https://consent.cookiebot.com/uc.js"
+    data-cbid="0a9e2c4e-c6d5-4b71-9e14-b4fdc20c48b8"
+    data-blockingmode="auto"
+    type="text/javascript">
+  </script>
 
-<!-- Defer GA init until consent is given -->
-<!-- <script type="text/plain" data-cookieconsent="statistics" src="/js/ga-init.js"></script> -->
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-WRMFW9VXZL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-WRMFW9VXZL');
-</script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WRMFW9VXZL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-WRMFW9VXZL');
+  </script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My game theory simulations</title>
-  <link rel="stylesheet" href="/css/style.css" />
 
+  <!-- Your global site CSS -->
+  <link rel="stylesheet" href="/css/style.css" />
+  <!-- Page-specific modern styles -->
+  <link rel="stylesheet" href="./css/game-theory.css" />
 
   <!-- D3 and your chart helper stay as they were -->
   <script src="https://d3js.org/d3.v7.js"></script>
   <script src="./js/draw_line_chart.js"></script>
-  
-  <style>
-    :root { --w: 540px; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; line-height: 1.4; margin: 24px; }
-    h1 { margin: 0 0 4px; font-size: 1.6rem; }
-    h2 { margin: 0 0 16px; font-weight: 500; font-size: 1.1rem; color: #444; }
-    fieldset { max-width: var(--w); border: 1px solid #ddd; border-radius: 10px; padding: 12px 14px; }
-    legend { padding: 0 6px; color: #333; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; }
-    label { font-size: .95rem; color: #333; }
-    input[type="number"] { padding: 6px 8px; }
-    .actions { margin-top: 12px; }
-    button { padding: 8px 14px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
-    button:hover { background: #f6f6f6; }
-    #chartArea { margin-top: 18px; }
-  </style>
- 
-
 </head>
+
 <body class="page-project-white">
-
-  <main>
-    <h1>Hello Renaud!</h1>
-    <h2>Nature in Code — Chapter 8: Cooperation: Good Guys Can Finish First.</h2>
-
-    <!-- Which simulations to load -->
-    <fieldset>
-      <legend>Which simulations?</legend>
-      <label style="display:block; margin:.25rem 0;">
-        <input id="chkP1" type="checkbox" checked> Part 1 — Cooperators vs Defectors (script_p1.js)
-      </label>
-      <label style="display:block; margin:.25rem 0;">
-        <input id="chkP2" type="checkbox" checked> Part 2 — Tit for Tat (script_p2.js)
-      </label>
-      <label style="display:block; margin:.25rem 0;">
-        <input id="chkP3" type="checkbox" checked> Part 3 — Win-Stay, Lose-Shift (script_p3.js)
-      </label>
-    </fieldset>
-
-    <!-- Parameter inputs -->
-    <fieldset style="margin-top: 12px;">
-      <legend>Simulation settings</legend>
-
-      <div class="grid">
-        <label for="inputC">c</label>
-        <input id="inputC" type="number" step="any" value="1">
-
-        <label for="inputB">b</label>
-        <input id="inputB" type="number" step="any" value="4">
-
-        <label for="inputPopulation">population_size</label>
-        <input id="inputPopulation" type="number" step="1" min="1" value="100">
-
-        <label for="inputSteps">number_of_time_steps</label>
-        <input id="inputSteps" type="number" step="1" min="1" value="1000">
-
-        <label for="inputMutation">mutation_rate</label>
-        <input id="inputMutation" type="number" step="any" min="0" value="0.001">
-
-        <label for="inputGameRepeats">game_repeats (only part 2)</label>
-        <input id="inputGameRepeats" type="number" step="any" min="0" value="100">
-
-        <label for="inputErrorRate">error_rate (only part 3)</label>
-        <input id="inputErrorRate" type="number" step="any" min="0" value="0.002">
-      </div>
-
-      <p style="font-size:.9rem; color:#555; margin:.5rem 0 0;">
-        Defaults: c=1, b=4, population_size=100, number_of_time_steps=1000, mutation_rate=0.001, game_repeats=100 (only part 2), error_rate=0.002 (only part 3).
-      </p>
-    </fieldset>
-
-    <!-- Single control button -->
-    <div class="actions">
-      <button id="reloadButton">Reload</button>
+  <!-- Topbar with Back button -->
+  <header class="topbar">
+    <div class="wrap">
+      <a class="back-btn" href="https://aragon.org.uk/index.html" aria-label="Back to homepage">← Back to homepage</a>
+      <span class="page-tag">Game Theory</span>
     </div>
+  </header>
 
-    <!-- Optional container if your scripts want to attach charts here -->
-    <div id="chartArea"></div>
+  <main class="content wrap">
+    <!-- Intro -->
+    <section class="intro card">
+      <h1 class="title">Cooperation, Competition & Simple Rules</h1>
+      <p class="lede">
+        Why do some groups thrive on trust while others collapse into selfishness? Chapter 8 in the book <em>Nature in Code</em> by Marcel Salathé
+        (<a href="https://leanpub.com/natureincode" target="_blank" rel="noopener">Leanpub</a>) explores that question with playful simulations of game theory in action.
+        You’ll start with the clash between simple cooperators and defectors, then see how the clever Tit-for-Tat strategy can build lasting partnerships through reciprocity.
+        Finally, you’ll discover the adaptable Win-Stay, Lose-Shift approach, where success breeds repetition and failure sparks change.
+        These experiments reveal how surprisingly simple rules can explain the rise of cooperation and how quickly it can break down.
+      </p>
+      <p class="source-note">
+        Code draws heavily from the official examples
+        (<a href="http://www.natureincode.com/code_examples.html" target="_blank" rel="noopener">natureincode.com/code_examples.html</a>).
+      </p>
+    </section>
+
+    <!-- Controls -->
+    <section class="controls card">
+      <h2 class="section-title">Nature in Code, Chapter 8: Cooperation: Good Guys Can Finish First.</h2>
+
+      <!-- Which simulations to load -->
+      <fieldset class="nice-fieldset">
+        <legend>Which simulations?</legend>
+        <label class="choice">
+          <input id="chkP1" type="checkbox" checked>
+          <span>Part 1 — Cooperators vs Defectors <code>(script_p1.js)</code></span>
+        </label>
+        <label class="choice">
+          <input id="chkP2" type="checkbox" checked>
+          <span>Part 2 — Tit for Tat <code>(script_p2.js)</code></span>
+        </label>
+        <label class="choice">
+          <input id="chkP3" type="checkbox" checked>
+          <span>Part 3 — Win-Stay, Lose-Shift <code>(script_p3.js)</code></span>
+        </label>
+      </fieldset>
+
+      <!-- Parameter inputs -->
+      <fieldset class="nice-fieldset">
+        <legend>Simulation settings</legend>
+        <div class="grid">
+          <label for="inputC">c</label>
+          <input id="inputC" type="number" step="any" value="1">
+
+          <label for="inputB">b</label>
+          <input id="inputB" type="number" step="any" value="4">
+
+          <label for="inputPopulation">population_size</label>
+          <input id="inputPopulation" type="number" step="1" min="1" value="100">
+
+          <label for="inputSteps">number_of_time_steps</label>
+          <input id="inputSteps" type="number" step="1" min="1" value="1000">
+
+          <label for="inputMutation">mutation_rate</label>
+          <input id="inputMutation" type="number" step="any" min="0" value="0.001">
+
+          <label for="inputGameRepeats">game_repeats (only part 2)</label>
+          <input id="inputGameRepeats" type="number" step="any" min="0" value="100">
+
+          <label for="inputErrorRate">error_rate (only part 3)</label>
+          <input id="inputErrorRate" type="number" step="any" min="0" value="0.002">
+        </div>
+
+        <p class="hint">
+          Defaults: <code>c=1</code>, <code>b=4</code>, <code>population_size=100</code>,
+          <code>number_of_time_steps=1000</code>, <code>mutation_rate=0.001</code>,
+          <code>game_repeats=100</code> (only part 2), <code>error_rate=0.002</code> (only part 3).
+        </p>
+      </fieldset>
+
+      <!-- Single control button -->
+      <div class="actions">
+        <button id="reloadButton" class="btn-primary">Reload</button>
+      </div>
+    </section>
+
+    <!-- Chart output area -->
+    <section class="charts card">
+      <h2 class="section-title">Results</h2>
+      <div id="chartArea"></div>
+    </section>
   </main>
 
-  <!-- Loader logic -->
+  <!-- Loader logic (unchanged) -->
   <script>
   (function () {
-    // Update these paths if your scripts are in ./js/
     const demoMap = {
       p1: './js/script_p1.js',
       p2: './js/script_p2.js',
@@ -121,10 +135,8 @@
     };
 
     function clearOldOutputs() {
-      // Remove charts (SVGs) and the <p> notes your scripts add at body level
       document.querySelectorAll('svg').forEach(el => el.remove());
       document.querySelectorAll('body > p').forEach(el => el.remove());
-      // Remove previously injected simulation scripts (but NOT global libs)
       document.querySelectorAll('[data-demo-script]').forEach(s => s.remove());
     }
 
@@ -153,7 +165,6 @@
       return sel;
     }
 
-    // Wait until draw_line_chart is available (poll up to ~2s)
     function waitForChartHelper(timeoutMs = 2000, intervalMs = 50) {
       return new Promise((resolve, reject) => {
         const start = Date.now();
@@ -170,7 +181,6 @@
       return new Promise((resolve, reject) => {
         const tag = document.createElement('script');
         tag.src = src;
-        // Dynamically-inserted scripts execute immediately on load
         tag.async = false;
         tag.setAttribute('data-demo-script', '');
         tag.onload  = () => resolve();
@@ -181,11 +191,8 @@
 
     async function runSelectedOnReload() {
       clearOldOutputs();
-
-      // Make config globally available to all simulation files
       window.simConfig = collectSimConfig();
 
-      // Ensure the chart helper is ready BEFORE any simulation runs
       try {
         await waitForChartHelper();
       } catch (e) {
@@ -196,11 +203,10 @@
 
       const selected = collectSelection().map(k => demoMap[k]).filter(Boolean);
       for (const src of selected) {
-        await loadDemo(src); // each script runs once on load and calls draw_line_chart(...)
+        await loadDemo(src);
       }
     }
 
-    // Only run when Reload is clicked (no auto-run on page load)
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('reloadButton').addEventListener('click', runSelectedOnReload);
     });

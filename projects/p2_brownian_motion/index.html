@@ -2,23 +2,25 @@
 <html lang="en">
 <head>
   <!-- Cookiebot (must be first in <head>) -->
-  <script id="Cookiebot"
-    src="https://consent.cookiebot.com/uc.js"
-    data-cbid="0a9e2c4e-c6d5-4b71-9e14-b4fdc20c48b8"
-    data-blockingmode="auto"
-    type="text/javascript">
-  </script>
+<script id="Cookiebot"
+  src="https://consent.cookiebot.com/uc.js"
+  data-cbid="0a9e2c4e-c6d5-4b71-9e14-b4fdc20c48b8"
+  data-blockingmode="auto"
+  type="text/javascript">
+</script>
 
-  <!-- Defer GA init until consent is given -->
-  <!-- <script type="text/plain" data-cookieconsent="statistics" src="/js/ga-init.js"></script> -->
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WRMFW9VXZL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-WRMFW9VXZL');
-  </script>
+<!-- Defer GA init until consent is given -->
+<!-- <script type="text/plain" data-cookieconsent="statistics" src="/js/ga-init.js"></script> -->
+ <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WRMFW9VXZL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-WRMFW9VXZL');
+</script>
+
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -40,23 +42,28 @@
   <!-- Chart.js for plotting results -->
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-  <!-- Site/page styles -->
-  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+    /* Fancy underline for links */
+    .link-underline { background-image: linear-gradient(currentColor, currentColor); background-size: 0% 2px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size 200ms ease; }
+    .link-underline:hover { background-size: 100% 2px; }
+    /* Code block styling tweaks */
+    pre[class*="language-"] { border-radius: 0.75rem; padding: 1rem; }
+  </style>
+
   <link rel="stylesheet" href="css/brownian.css" />
+  
 </head>
 <body class="bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
   <!-- ===== NAVBAR ===== -->
   <header class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60 border-b border-slate-200/70 dark:border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
-        <div class="flex items-center gap-3">
-          <!-- Back to homepage button -->
-          <a href="https://aragon.org.uk/index.html" class="back-btn" aria-label="Back to homepage">← Back</a>
-          <a href="#top" class="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
-            <span class="inline-grid place-items-center w-8 h-8 rounded-full bg-sky-500 text-white text-sm font-bold">µ</span>
-            <span>With 3D‑Printed Microscope</span>
-          </a>
-        </div>
+        <a href="#top" class="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
+          <span class="inline-grid place-items-center w-8 h-8 rounded-full bg-sky-500 text-white text-sm font-bold">µ</span>
+          <span>With 3D‑Printed Microscope</span>
+        </a>
         <nav class="hidden md:flex items-center gap-6 text-sm">
           <a class="hover:text-sky-600 link-underline" href="#overview">Overview</a>
           <a class="hover:text-sky-600 link-underline" href="#build">Build</a>
@@ -75,11 +82,11 @@
         </div>
       </div>
       <nav id="mobileMenu" class="md:hidden hidden pb-4">
-        <a class="block py-2 hover:text-sky-600 link-underline" href="#overview">Overview</a>
-        <a class="block py-2 hover:text-sky-600 link-underline" href="#build">Build</a>
-        <a class="block py-2 hover:text-sky-600 link-underline" href="#experiment">Experiment</a>
-        <a class="block py-2 hover:text-sky-600 link-underline" href="#results">Results</a>
-        <a class="block py-2 hover:text-sky-600 link-underline" href="#gallery">Gallery</a>
+        <a class="block py-2 hover:text-sky-600" href="#overview">Overview</a>
+        <a class="block py-2 hover:text-sky-600" href="#build">Build</a>
+        <a class="block py-2 hover:text-sky-600" href="#experiment">Experiment</a>
+        <a class="block py-2 hover:text-sky-600" href="#results">Results</a>
+        <a class="block py-2 hover:text-sky-600" href="#gallery">Gallery</a>
       </nav>
     </div>
   </header>
@@ -95,7 +102,7 @@
    target="_blank" rel="noopener" class="highlight-link"> openflexure</a>
  microscope with printed parts, assembled the optics, 
             and used Python to track Brownian motion of particles (micrometer scale). This page documents the build, the experiment, and my results.</p>
-
+     
           <div class="mt-6 flex flex-wrap gap-3">
             <span class="px-3 py-1 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 text-sm">3D Printing</span>
             <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 text-sm">Microscopy</span>
@@ -288,15 +295,15 @@ print(msd.head())
         </div>
 
         <div class="lg:col-span-2 space-y-6">
-          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/30" style="height:320px">
+          <div class="p-6 rounded-2xl border ... bg-white/60 dark:bg-slate-950/30" style="height:320px">
             <h3 class="font-semibold">Trajectory (x vs y)</h3>
             <canvas id="trajChart" class="h-full w-full"></canvas>
-          </div>
+            </div>
 
-          <div class="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-950/30" style="height:320px">
+            <div class="p-6 rounded-2xl border ... bg-white/60 dark:bg-slate-950/30" style="height:320px">
             <h3 class="font-semibold">MSD vs Δt</h3>
             <canvas id="msdChart" class="h-full w-full"></canvas>
-          </div>
+            </div>
         </div>
       </div>
       <p class="mt-4 text-xs text-slate-500">Note: MSD is computed across lags assuming uniform time steps; only initial lags are used for the linear fit.</p>
@@ -327,7 +334,7 @@ print(msd.head())
     </div>
   </footer>
 
-  <!-- Your app scripts (unchanged functionality) -->
+  <!-- Your app scripts -->
   <script defer src="./js/utils.js"></script>
   <script defer src="./js/charts.js"></script>
   <script defer src="./js/data.js"></script>

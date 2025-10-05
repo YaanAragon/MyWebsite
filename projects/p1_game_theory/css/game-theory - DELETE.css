@@ -1,26 +1,24 @@
-/* ===== Tokens & Base (Light Theme) ===== */
+/* ===== Tokens & Base ===== */
 :root{
-  --bg: #ffffff;
-  --panel: rgba(0,0,0,0.04);
-  --panel-2: rgba(0,0,0,0.02);
-  --text: #111111;
-  --muted: #555555;
-  --border: rgba(0,0,0,0.12);
-  --accent: #007acc;     /* primary accent */
-  --accent-2: #005f99;   /* secondary accent */
+  --bg: #0b1020;
+  --panel: rgba(255,255,255,0.06);
+  --panel-2: rgba(255,255,255,0.03);
+  --text: #e7e9ef;
+  --muted: #b9bfd1;
+  --border: rgba(255,255,255,0.12);
+  --accent: #8cd1ff;
+  --accent-2: #c4a8ff;
   --radius: 16px;
-  --shadow: 0 8px 20px rgba(0,0,0,0.08), inset 0 0 0 1px var(--border);
+  --shadow: 0 10px 30px rgba(0,0,0,0.45), inset 0 0 0 1px var(--border);
   --wrap: min(1100px, 92vw);
 }
 
 html, body { height: 100%; }
-
-/* Page wrapper body */
 body.page-project-white{
   margin: 0;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
   color: var(--text);
-  background: var(--bg);
+  background: radial-gradient(1200px 800px at 10% 0%, #0f1630 0%, #0b1020 45%, #090d19 100%);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
@@ -31,10 +29,10 @@ body.page-project-white{
   margin-inline: auto;
 }
 
-/* ===== Topbar (Light) ===== */
+/* ===== Topbar ===== */
 .topbar{
   position: sticky; top: 0; z-index: 10;
-  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+  background: linear-gradient(180deg, rgba(10,13,25,0.9), rgba(10,13,25,0.4));
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(8px) saturate(1.1);
 }
@@ -42,22 +40,17 @@ body.page-project-white{
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 0;
 }
-
-/* Back button: high-contrast on light header */
 .back-btn{
   display: inline-block;
   text-decoration: none;
-  color: #ffffff;
+  color: #0a0f1f;
   font-weight: 700;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   padding: 10px 14px;
   border-radius: 999px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow);
 }
-.back-btn:hover{ filter: brightness(1.03); transform: translateY(-1px); transition: transform .15s ease, filter .15s ease; }
 .back-btn:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
-
 .page-tag{
   color: var(--muted);
   font-size: 0.95rem;
@@ -70,7 +63,7 @@ body.page-project-white{
   gap: 18px;
 }
 
-/* ===== Cards (Light) ===== */
+/* ===== Cards ===== */
 .card{
   background: linear-gradient(180deg, var(--panel), var(--panel-2));
   border: 1px solid var(--border);
@@ -115,7 +108,6 @@ body.page-project-white{
   border-radius: 14px;
   padding: 14px 16px;
   margin: 14px 0;
-  background: rgba(255,255,255,0.6);
 }
 .nice-fieldset legend{
   padding: 0 8px;
@@ -136,20 +128,17 @@ body.page-project-white{
   align-items: center;
 }
 label{ color: var(--text); opacity: 0.92; }
-
-/* Inputs on light background */
 input[type="number"]{
   padding: 8px 10px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: #ffffff;
+  background: rgba(255,255,255,0.06);
   color: var(--text);
   outline: none;
 }
-input[type="number"]::placeholder{ color: #8a8a8a; }
 input[type="number"]:focus{
-  border-color: rgba(0,0,0,0.22);
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.18);
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 0 0 3px rgba(140, 209, 255, 0.18);
 }
 
 .hint{
@@ -162,31 +151,25 @@ input[type="number"]:focus{
 .actions{ margin-top: 10px; }
 .btn-primary{
   appearance: none;
-  border: 1px solid rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #ffffff;
+  color: #0a0f1f;
   font-weight: 700;
   padding: 10px 16px;
   border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  box-shadow: var(--shadow);
+  transition: transform .15s ease, box-shadow .15s ease;
 }
-.btn-primary:hover{ transform: translateY(-2px); filter: brightness(1.03); }
+.btn-primary:hover{ transform: translateY(-2px); }
 .btn-primary:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ===== Charts ===== */
 .charts #chartArea{
   margin-top: 8px;
+  /* Let D3 charts breathe inside the card */
 }
 svg{ max-width: 100%; height: auto; }
-
-/* ===== Links inside content ===== */
-.card a{
-  color: var(--accent);
-  text-underline-offset: 2px;
-}
-.card a:hover{ text-decoration: underline; }
 
 /* ===== Responsive ===== */
 @media (max-width: 780px){

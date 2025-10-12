@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hill Cipher — 2×2 Invertibility Checker</title>
+  <link rel="stylesheet" href="css/hill.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Hill Cipher — 2×2 Invertibility Checker (mod n)</h1>
+
+    <form id="inv-form" class="card" autocomplete="off">
+      <fieldset class="matrix-fieldset">
+        <legend id="matrix-legend">Enter the 2×2 matrix</legend>
+
+        <div class="matrix-wrap" role="group" aria-labelledby="matrix-legend">
+          <table class="matrix">
+            <tbody>
+              <tr>
+                <td>
+                  <label class="sr-only" for="a">a</label>
+                  <input id="a" inputmode="numeric" type="number" step="1" value="3" placeholder="a" required>
+                </td>
+                <td>
+                  <label class="sr-only" for="b">b</label>
+                  <input id="b" inputmode="numeric" type="number" step="1" value="3" placeholder="b" required>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="sr-only" for="c">c</label>
+                  <input id="c" inputmode="numeric" type="number" step="1" value="2" placeholder="c" required>
+                </td>
+                <td>
+                  <label class="sr-only" for="d">d</label>
+                  <input id="d" inputmode="numeric" type="number" step="1" value="5" placeholder="d" required>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+
+      <div class="row">
+        <div class="field">
+          <label for="n">Modulus n</label>
+          <input id="n" inputmode="numeric" type="number" step="1" min="2" value="26" required>
+          <small class="hint">Entries can be any integers (negatives or larger than n are fine).</small>
+        </div>
+        <div class="actions">
+          <button id="check" type="submit" class="btn primary">Check invertibility</button>
+          <button id="clear" type="button" class="btn">Clear</button>
+        </div>
+      </div>
+
+      <output id="result" class="result" aria-live="polite">
+        Enter values and press <em>Check invertibility</em>.
+      </output>
+    </form>
+
+      <section class="card">
+        <h2>Text → Numbers Converter</h2>
+        <form id="text-form" autocomplete="off">
+            <div class="field">
+            <label for="text-input">Enter text</label>
+            <input id="text-input" type="text" placeholder="Enter your message here" required />
+            </div>
+
+            <div class="field">
+            <label for="base-select">Choose base</label>
+            <select id="base-select">
+                <option value="26">26 (letters only)</option>
+                <option value="29">29 (letters + space + . + ?)</option>
+            </select>
+            </div>
+
+            <div class="actions">
+            <button type="submit" class="btn primary">Convert</button>
+            <button type="button" id="clear-text" class="btn">Clear</button>
+            </div>
+
+            <output id="text-result" class="result" aria-live="polite">
+            Enter text and select base to see numeric array.
+            </output>
+        </form>
+    </section>
+
+    <!-- ===================== 1) NUMBERS → TEXT ===================== -->
+    <section class="card">
+    <h2>Numbers → Text</h2>
+    <form id="nums-to-text-form" autocomplete="off">
+        <div class="field">
+        <label for="nums-base">Base</label>
+        <select id="nums-base">
+            <option value="26">26 (letters only)</option>
+            <option value="29">29 (letters + space + . + ?)</option>
+        </select>
+        </div>
+
+        <div class="field">
+        <label for="nums-input">Comma-separated numbers (0 … base−1)</label>
+        <input id="nums-input" type="text" placeholder="e.g. 7,4,11,11,14" required />
+        </div>
+
+        <div class="actions">
+        <button type="submit" class="btn primary">Convert to text</button>
+        <button type="button" id="nums-clear" class="btn">Clear</button>
+        </div>
+
+        <output id="nums-text-out" class="result" aria-live="polite">
+        Enter numbers and choose a base.
+        </output>
+    </form>
+    </section>
+
+    <!-- ===================== 2) ENCRYPTION ===================== -->
+    <section class="card">
+    <h2>Encryption (Hill 2×2)</h2>
+    <form id="encrypt-form" autocomplete="off">
+        <div class="field">
+        <label for="enc-key-letters">Key (4 letters, a–z only)</label>
+        <input id="enc-key-letters" type="text" maxlength="4" placeholder="e.g. d e f a → 'defa'" required />
+        <small class="hint">Only letters are used; case-insensitive. Mapped a→0 … z→25.</small>
+        </div>
+
+        <div class="field">
+        <label for="enc-message">Plaintext message</label>
+        <input id="enc-message" type="text" placeholder="Your message…" required />
+        </div>
+
+        <div class="field">
+        <label for="enc-base">Base</label>
+        <select id="enc-base">
+            <option value="26">26 (letters only)</option>
+            <option value="29">29 (letters + space + . + ?)</option>
+        </select>
+        </div>
+
+        <div class="actions">
+        <button type="submit" class="btn primary">Encrypt</button>
+        <button type="button" id="enc-clear" class="btn">Clear</button>
+        </div>
+
+        <output id="enc-out" class="result" aria-live="polite">
+        Enter key, message and base to encrypt.
+        </output>
+    </form>
+    </section>
+
+    <!-- ===================== 3) DECRYPTION ===================== -->
+    <section class="card">
+    <h2>Decryption (Hill 2×2)</h2>
+    <form id="decrypt-form" autocomplete="off">
+        <div class="field">
+        <label for="dec-key-nums">Key as 4 numbers (comma-separated)</label>
+        <input id="dec-key-nums" type="text" placeholder="e.g. 3,3,2,5" required />
+        <small class="hint">These are the matrix entries [a,b,c,d] (row-major): [[a,b],[c,d]].</small>
+        </div>
+
+        <div class="field">
+        <label for="dec-base">Base</label>
+        <select id="dec-base">
+            <option value="26">26 (letters only)</option>
+            <option value="29">29 (letters + space + . + ?)</option>
+        </select>
+        </div>
+
+        <div class="field">
+        <label for="dec-cipher-nums">Encrypted numbers (comma-separated)</label>
+        <input id="dec-cipher-nums" type="text" placeholder="e.g. 17,11,0,21,12,5" required />
+        </div>
+
+        <div class="actions">
+        <button type="submit" class="btn primary">Decrypt</button>
+        <button type="button" id="dec-clear" class="btn">Clear</button>
+        </div>
+
+        <output id="dec-out" class="result" aria-live="polite">
+        Enter key, base and ciphertext numbers to decrypt.
+        </output>
+    </form>
+</section>
+
+
+  </main>
+
+
+  <!-- Must define isInvertibleModN(a,b,c,d,n) and other functions here -->
+  <script defer src="js/hill_cypher.js"></script>
+
+  <script>
+    function guardHasFunction() {
+      if (typeof isInvertibleModN !== "function") {
+        throw new Error("isInvertibleModN(a,b,c,d,n) is not available. Check hill_cypher.js path.");
+      }
+    }
+
+    const $ = (id) => document.getElementById(id);
+    const form = $("inv-form");
+    const result = $("result");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      try {
+        guardHasFunction();
+
+        const a = parseInt($("a").value, 10);
+        const b = parseInt($("b").value, 10);
+        const c = parseInt($("c").value, 10);
+        const d = parseInt($("d").value, 10);
+        const n = parseInt($("n").value, 10);
+
+        if (![a,b,c,d,n].every(Number.isInteger) || n <= 1) {
+          result.innerHTML = '<span class="bad">Please enter integers (and n ≥ 2).</span>';
+          return;
+        }
+
+        const ok = isInvertibleModN(a, b, c, d, n);
+
+        const mod = (x, m) => ((x % m) + m) % m;
+        const detMod = mod(mod(a,n)*mod(d,n) - mod(b,n)*mod(c,n), n);
+
+        result.innerHTML = ok
+          ? `<span class="ok">✅ Invertible mod ${n}</span> — gcd(det, n) = gcd(${detMod}, ${n}) = 1`
+          : `<span class="bad">❌ Not invertible mod ${n}</span> — gcd(det, n) ≠ 1`;
+      } catch (err) {
+        console.error(err);
+        result.innerHTML = `<span class="bad">Error:</span> ${err.message}`;
+      }
+    });
+
+    $("clear").addEventListener("click", () => {
+      ["a","b","c","d","n"].forEach(id => $(id).value = "");
+      result.textContent = "Enter values and press Check invertibility.";
+    });
+  </script>
+
+  
+<script>
+  const textForm = document.getElementById("text-form");
+  const textResult = document.getElementById("text-result");
+  const textInput = document.getElementById("text-input");
+  const baseSelect = document.getElementById("base-select");
+
+  textForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (typeof textToNumbers !== "function") {
+      textResult.textContent = "Function textToNumbers() not found. Check script path.";
+      return;
+    }
+
+    const text = textInput.value.trim();
+    const base = parseInt(baseSelect.value, 10);
+
+    const result = textToNumbers(text, base);
+
+    if (Array.isArray(result)) {
+      textResult.innerHTML = `<strong>Numeric array:</strong> [${result.join(", ")}]`;
+    } else {
+      textResult.innerHTML = `<span class="bad">${result}</span>`;
+    }
+  });
+
+  document.getElementById("clear-text").addEventListener("click", () => {
+    textInput.value = "";
+    textResult.textContent = "Enter text and select base to see numeric array.";
+  });
+</script>
+
+<script>
+  // ---------- Helpers ----------
+  const mod = (x, m) => ((x % m) + m) % m;
+
+  function parseCommaInts(str) {
+    if (str.trim() === "") return [];
+    return str.split(",")
+      .map(s => s.trim())
+      .filter(s => s.length > 0)
+      .map(s => Number(s))
+      .filter(n => Number.isInteger(n));
+  }
+
+  function validateRange(arr, base) {
+    return arr.every(n => n >= 0 && n < base);
+  }
+
+  function onlyLetters(str) {
+    return (str.match(/[a-z]/gi) || []).join("");
+  }
+
+  // ---------- 1) NUMBERS → TEXT ----------
+  (function setupNumsToText() {
+    const form = document.getElementById("nums-to-text-form");
+    const out = document.getElementById("nums-text-out");
+    const baseSel = document.getElementById("nums-base");
+    const input = document.getElementById("nums-input");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const base = parseInt(baseSel.value, 10);
+      const nums = parseCommaInts(input.value);
+
+      if (nums.length === 0) {
+        out.innerHTML = '<span class="bad">Please enter at least one number.</span>';
+        return;
+      }
+      if (!validateRange(nums, base)) {
+        out.innerHTML = `<span class="bad">All numbers must be in 0…${base-1}.</span>`;
+        return;
+      }
+
+      const text = numbersToText(nums, base);
+      out.innerHTML = `<strong>Text:</strong> ${text}`;
+    });
+
+    document.getElementById("nums-clear").addEventListener("click", () => {
+      input.value = "";
+      out.textContent = "Enter numbers and choose a base.";
+    });
+  })();
+
+  // ---------- 2) ENCRYPTION ----------
+  (function setupEncryption() {
+    const form = document.getElementById("encrypt-form");
+    const out = document.getElementById("enc-out");
+    const keyInput = document.getElementById("enc-key-letters");
+    const msgInput = document.getElementById("enc-message");
+    const baseSel = document.getElementById("enc-base");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const base = parseInt(baseSel.value, 10);
+      const keyLetters = onlyLetters(keyInput.value).toLowerCase();
+
+      if (keyLetters.length !== 4) {
+        out.innerHTML = '<span class="bad">Key must be exactly 4 letters (a–z).</span>';
+        return;
+      }
+
+      // Map key letters → numbers (a→0 … z→25)
+      const keyNums = [...keyLetters].map(ch => ch.charCodeAt(0) - 97);
+
+      // Map message using your earlier function
+      const msgNums = textToNumbers(msgInput.value, base);
+      if (!Array.isArray(msgNums)) {
+        out.innerHTML = `<span class="bad">${msgNums}</span>`;
+        return;
+      }
+      if (msgNums.length === 0) {
+        out.innerHTML = '<span class="bad">Message has no encodable symbols for the chosen base.</span>';
+        return;
+      }
+
+      const enc = hillEncrypt(keyNums, msgNums, base);
+      if (!Array.isArray(enc)) {
+        out.innerHTML = `<span class="bad">${enc}</span>`;
+        return;
+      }
+
+      out.innerHTML = `<strong>Encrypted numbers:</strong> ${enc.join(", ")}`;
+    });
+
+    document.getElementById("enc-clear").addEventListener("click", () => {
+      keyInput.value = "";
+      msgInput.value = "";
+      out.textContent = "Enter key, message and base to encrypt.";
+    });
+  })();
+
+  // ---------- 3) DECRYPTION ----------
+  (function setupDecryption() {
+    const form = document.getElementById("decrypt-form");
+    const out = document.getElementById("dec-out");
+    const keyInput = document.getElementById("dec-key-nums");
+    const baseSel = document.getElementById("dec-base");
+    const ciphInput = document.getElementById("dec-cipher-nums");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const base = parseInt(baseSel.value, 10);
+      const keyArr = parseCommaInts(keyInput.value);
+      const ciphArr = parseCommaInts(ciphInput.value);
+
+      if (keyArr.length !== 4) {
+        out.innerHTML = '<span class="bad">Key must be exactly 4 integers: a,b,c,d.</span>';
+        return;
+      }
+      if (ciphArr.length === 0) {
+        out.innerHTML = '<span class="bad">Please enter encrypted numbers.</span>';
+        return;
+      }
+      if (!validateRange(ciphArr, base)) {
+        out.innerHTML = `<span class="bad">Cipher numbers must be in 0…${base-1}.</span>`;
+        return;
+      }
+
+      // Check key invertibility first
+      const [a,b,c,d] = keyArr;
+      if (typeof isInvertibleModN !== "function") {
+        out.innerHTML = '<span class="bad">isInvertibleModN() not found. Check hill_cypher.js.</span>';
+        return;
+      }
+      const invertible = isInvertibleModN(a, b, c, d, base);
+      if (!invertible) {
+        out.innerHTML = `<span class="bad">Key matrix is NOT invertible mod ${base}. Not a valid key.</span>`;
+        return;
+      }
+
+      const decNums = hillDecrypt(keyArr, ciphArr, base);
+      if (!Array.isArray(decNums)) {
+        out.innerHTML = `<span class="bad">${decNums}</span>`;
+        return;
+      }
+
+      const text = numbersToText(decNums, base);
+      out.innerHTML = `<strong>Decrypted text:</strong> ${text}`;
+    });
+
+    document.getElementById("dec-clear").addEventListener("click", () => {
+      keyInput.value = "";
+      ciphInput.value = "";
+      out.textContent = "Enter key, base and ciphertext numbers to decrypt.";
+    });
+  })();
+</script>
+
+
+</body>
+</html>

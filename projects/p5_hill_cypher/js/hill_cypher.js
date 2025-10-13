@@ -252,3 +252,256 @@ function modInverse(a, m) {
 // console.log(hillDecrypt(key, cipher, base));
 // Should output something like [7, 4, 11, 11, 14] ("HELLO")
 
+// ===== Flexible Input Utilities =====
+function _onlyLetters(str) {
+  return (str.match(/[a-z]/gi) || []).join("").toLowerCase();
+}
+
+function _parseCommaInts(str) {
+  if (!str || !str.trim()) return [];
+  return str.split(/[,\s;]+/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(Number)
+    .filter(Number.isInteger);
+}
+
+function _validateRange(arr, base) {
+  return arr.every(n => n >= 0 && n < base);
+}
+
+// Key: letters→nums and nums→letters (for display)
+function parseKeyFlexible({ type, value, base }) {
+  if (type === "letters") {
+    const letters = _onlyLetters(value);
+    if (letters.length !== 4) {
+      return { error: "Key must be exactly 4 letters (a–z)." };
+    }
+    const nums = [...letters].map(ch => ch.charCodeAt(0) - 97);
+    return { nums, letters };
+  } else {
+    const nums = _parseCommaInts(value);
+    if (nums.length !== 4) {
+      return { error: "Key must be exactly 4 integers: a,b,c,d." };
+    }
+    if (!_validateRange(nums, 26)) {
+      // Key entries are matrix entries; they are used mod base at encryption time anyway.
+      // We allow any integers; but for display-as-letters we clamp to 0..25.
+    }
+    const letters = nums.map(n => {
+      const k = ((n % 26) + 26) % 26; // map to 0..25 to render a..z only
+      return String.fromCharCode(97 + k);
+    }).join("");
+    return { nums, letters };
+  }
+}
+
+// Message: text<->nums for chosen base
+function parseMessageFlexible({ type, value, base }) {
+  if (type === "text") {
+    const nums = textToNumbers(value, base);
+    if (!Array.isArray(nums) || nums.length === 0) {
+      return { error: "Message has no encodable symbols for the chosen base." };
+    }
+    const text = numbersToText(nums, base); // normalized lowercase
+    return { nums, text };
+  } else {
+    const nums = _parseCommaInts(value);
+    if (nums.length === 0) return { error: "Please enter at least one number." };
+    if (!_validateRange(nums, base)) return { error: `All numbers must be in 0…${base - 1}.` };
+    const text = numbersToText(nums, base);
+    return { nums, text };
+  }
+}
+
+// ===== UI wiring =====
+function _toggle(hiddenEl, show) {
+  if (show) hiddenEl.classList.remove("hidden");
+  else hiddenEl.classList.add("hidden");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // ---------- Encryption ----------
+  const encForm = document.getElementById("encrypt-form");
+  if (encForm) {
+    const encOut = document.getElementById("enc-out");
+    const encBase = document.getElementById("enc-base");
+
+    const encKeyType = document.getElementById("enc-key-type");
+    const encKeyLetters = document.getElementById("enc-key-letters");
+    const encKeyNums = document.getElementById("enc-key-nums");
+
+    const encMsgType = document.getElementById("enc-msg-type");
+    const encMsgText = document.getElementById("enc-message-text");
+    const encMsgNums = document.getElementById("enc-message-nums");
+
+    const encClear = document.getElementById("enc-clear");
+
+    // show/hide key inputs
+    function syncEncKeyUI() {
+      const t = encKeyType.value;
+      _toggle(encKeyLetters, t === "letters");
+      _toggle(encKeyNums, t === "numbers");
+    }
+    // show/hide message inputs
+    function syncEncMsgUI() {
+      const t = encMsgType.value;
+      _toggle(encMsgText, t === "text");
+      _toggle(encMsgNums, t === "numbers");
+    }
+    encKeyType.addEventListener("change", syncEncKeyUI);
+    encMsgType.addEventListener("change", syncEncMsgUI);
+    syncEncKeyUI();
+    syncEncMsgUI();
+
+    encForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const base = parseInt(encBase.value, 10);
+
+      const keyParsed = parseKeyFlexible({
+        type: encKeyType.value,
+        value: encKeyType.value === "letters" ? encKeyLetters.value : encKeyNums.value,
+        base
+      });
+      if (keyParsed.error) {
+        encOut.innerHTML = `<span class="bad">${keyParsed.error}</span>`;
+        return;
+      }
+
+      const msgParsed = parseMessageFlexible({
+        type: encMsgType.value,
+        value: encMsgType.value === "text" ? encMsgText.value : encMsgNums.value,
+        base
+      });
+      if (msgParsed.error) {
+        encOut.innerHTML = `<span class="bad">${msgParsed.error}</span>`;
+        return;
+      }
+
+      // Encrypt (numbers only), then show both formats
+      const cipherNums = hillEncrypt(keyParsed.nums, msgParsed.nums, base);
+      if (!Array.isArray(cipherNums)) {
+        encOut.innerHTML = `<span class="bad">${cipherNums}</span>`;
+        return;
+      }
+      const cipherText = numbersToText(cipherNums, base);
+
+      // Optional: warn if key not invertible (encryption still works)
+      const [a,b,c,d] = keyParsed.nums;
+      let warn = "";
+      if (typeof isInvertibleModN === "function" && !isInvertibleModN(a,b,c,d,base)) {
+        warn = `<br><span class="bad">Warning: key is NOT invertible mod ${base} — decryption won’t be possible.</span>`;
+      }
+
+      encOut.innerHTML = `
+        <strong>Key (letters):</strong> ${keyParsed.letters}<br>
+        <strong>Key (numbers):</strong> ${keyParsed.nums.join(", ")}<br><br>
+        <strong>Ciphertext (text):</strong> ${cipherText}<br>
+        <strong>Ciphertext (numbers):</strong> ${cipherNums.join(", ")}
+        ${warn}
+      `;
+    });
+
+    encClear.addEventListener("click", () => {
+      encKeyType.value = "letters";
+      encMsgType.value = "text";
+      encKeyLetters.value = "";
+      encKeyNums.value = "";
+      encMsgText.value = "";
+      encMsgNums.value = "";
+      syncEncKeyUI();
+      syncEncMsgUI();
+      encOut.textContent = "Enter key & message (text or numbers), pick a base, then Encrypt.";
+    });
+  }
+
+  // ---------- Decryption ----------
+  const decForm = document.getElementById("decrypt-form");
+  if (decForm) {
+    const decOut = document.getElementById("dec-out");
+    const decBase = document.getElementById("dec-base");
+
+    const decKeyType = document.getElementById("dec-key-type");
+    const decKeyLetters = document.getElementById("dec-key-letters");
+    const decKeyNums = document.getElementById("dec-key-nums");
+
+    const decMsgType = document.getElementById("dec-msg-type");
+    const decCipherText = document.getElementById("dec-cipher-text");
+    const decCipherNums = document.getElementById("dec-cipher-nums");
+
+    const decClear = document.getElementById("dec-clear");
+
+    function syncDecKeyUI() {
+      const t = decKeyType.value;
+      _toggle(decKeyLetters, t === "letters");
+      _toggle(decKeyNums, t === "numbers");
+    }
+    function syncDecMsgUI() {
+      const t = decMsgType.value;
+      _toggle(decCipherText, t === "text");
+      _toggle(decCipherNums, t === "numbers");
+    }
+    decKeyType.addEventListener("change", syncDecKeyUI);
+    decMsgType.addEventListener("change", syncDecMsgUI);
+    syncDecKeyUI();
+    syncDecMsgUI();
+
+    decForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const base = parseInt(decBase.value, 10);
+
+      const keyParsed = parseKeyFlexible({
+        type: decKeyType.value,
+        value: decKeyType.value === "letters" ? decKeyLetters.value : decKeyNums.value,
+        base
+      });
+      if (keyParsed.error) {
+        decOut.innerHTML = `<span class="bad">${keyParsed.error}</span>`;
+        return;
+      }
+
+      // Check key invertibility first (required for decryption)
+      const [a,b,c,d] = keyParsed.nums;
+      if (typeof isInvertibleModN !== "function" || !isInvertibleModN(a,b,c,d,base)) {
+        decOut.innerHTML = `<span class="bad">Key matrix is NOT invertible mod ${base}. Not a valid key.</span>`;
+        return;
+      }
+
+      const msgParsed = parseMessageFlexible({
+        type: decMsgType.value,
+        value: decMsgType.value === "text" ? decCipherText.value : decCipherNums.value,
+        base
+      });
+      if (msgParsed.error) {
+        decOut.innerHTML = `<span class="bad">${msgParsed.error}</span>`;
+        return;
+      }
+
+      const plainNums = hillDecrypt(keyParsed.nums, msgParsed.nums, base);
+      if (!Array.isArray(plainNums)) {
+        decOut.innerHTML = `<span class="bad">${plainNums}</span>`;
+        return;
+      }
+      const plainText = numbersToText(plainNums, base);
+
+      decOut.innerHTML = `
+        <strong>Key (letters):</strong> ${keyParsed.letters}<br>
+        <strong>Key (numbers):</strong> ${keyParsed.nums.join(", ")}<br><br>
+        <strong>Plaintext (text):</strong> ${plainText}<br>
+        <strong>Plaintext (numbers):</strong> ${plainNums.join(", ")}
+      `;
+    });
+
+    decClear.addEventListener("click", () => {
+      decKeyType.value = "letters";
+      decMsgType.value = "text";
+      decKeyLetters.value = "";
+      decKeyNums.value = "";
+      decCipherText.value = "";
+      decCipherNums.value = "";
+      syncDecKeyUI();
+      syncDecMsgUI();
+      decOut.textContent = "Enter key & ciphertext (text or numbers), pick a base, then Decrypt.";
+    });
+  }
+});

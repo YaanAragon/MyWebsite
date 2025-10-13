@@ -21,12 +21,12 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hill Cipher — 2×2 Invertibility Checker</title>
+  <title>Hill Cipher 2×2 Case</title>
   <link rel="stylesheet" href="css/hill.css">
 </head>
 <body>
   <main class="container">
-    <h1>Hill Cipher — 2×2 Invertibility Checker (mod n)</h1>
+    <h1>Invertibility Checker (mod n) for 2x2 matrix</h1>
 
     <form id="inv-form" class="card" autocomplete="off">
       <fieldset class="matrix-fieldset">
@@ -134,71 +134,103 @@
 
     <!-- ===================== 2) ENCRYPTION ===================== -->
     <section class="card">
-    <h2>Encryption (Hill 2×2)</h2>
-    <form id="encrypt-form" autocomplete="off">
-        <div class="field">
-        <label for="enc-key-letters">Key (4 letters, a–z only)</label>
-        <input id="enc-key-letters" type="text" maxlength="4" placeholder="e.g. d e f a → 'defa'" required />
-        <small class="hint">Only letters are used; case-insensitive. Mapped a→0 … z→25.</small>
+      <h2>Encryption (Hill 2×2)</h2>
+      <form id="encrypt-form" autocomplete="off">
+        <div class="row">
+          <div class="field">
+            <label for="enc-base">Base</label>
+            <select id="enc-base">
+              <option value="26">26 (letters only)</option>
+              <option value="29">29 (letters + space + . + ?)</option>
+            </select>
+          </div>
         </div>
 
-        <div class="field">
-        <label for="enc-message">Plaintext message</label>
-        <input id="enc-message" type="text" placeholder="Your message…" required />
-        </div>
+        <div class="grid-2">
+          <!-- KEY INPUT -->
+          <div class="field">
+            <label>Key input type</label>
+            <select id="enc-key-type">
+              <option value="letters" selected>Letters (4 chars)</option>
+              <option value="numbers">Numbers (a,b,c,d)</option>
+            </select>
+            <input id="enc-key-letters" type="text" maxlength="4" placeholder="e.g. defa" />
+            <input id="enc-key-nums" type="text" placeholder="e.g. 3,3,2,5" class="hidden" />
+            <small class="hint">Key forms [[a,b],[c,d]]. If you type letters: a→0 … z→25.</small>
+          </div>
 
-        <div class="field">
-        <label for="enc-base">Base</label>
-        <select id="enc-base">
-            <option value="26">26 (letters only)</option>
-            <option value="29">29 (letters + space + . + ?)</option>
-        </select>
+          <!-- MESSAGE INPUT -->
+          <div class="field">
+            <label>Message input type</label>
+            <select id="enc-msg-type">
+              <option value="text" selected>Text</option>
+              <option value="numbers">Numbers (comma-separated)</option>
+            </select>
+            <input id="enc-message-text" type="text" placeholder="Your message…" />
+            <input id="enc-message-nums" type="text" placeholder="e.g. 7,4,11,11,14" class="hidden" />
+          </div>
         </div>
 
         <div class="actions">
-        <button type="submit" class="btn primary">Encrypt</button>
-        <button type="button" id="enc-clear" class="btn">Clear</button>
+          <button type="submit" class="btn primary">Encrypt</button>
+          <button type="button" id="enc-clear" class="btn">Clear</button>
         </div>
 
         <output id="enc-out" class="result" aria-live="polite">
-        Enter key, message and base to encrypt.
+          Enter key & message (text or numbers), pick a base, then Encrypt.
         </output>
-    </form>
+      </form>
     </section>
 
     <!-- ===================== 3) DECRYPTION ===================== -->
     <section class="card">
-    <h2>Decryption (Hill 2×2)</h2>
-    <form id="decrypt-form" autocomplete="off">
-        <div class="field">
-        <label for="dec-key-nums">Key as 4 numbers (comma-separated)</label>
-        <input id="dec-key-nums" type="text" placeholder="e.g. 3,3,2,5" required />
-        <small class="hint">These are the matrix entries [a,b,c,d] (row-major): [[a,b],[c,d]].</small>
+      <h2>Decryption (Hill 2×2)</h2>
+      <form id="decrypt-form" autocomplete="off">
+        <div class="row">
+          <div class="field">
+            <label for="dec-base">Base</label>
+            <select id="dec-base">
+              <option value="26">26 (letters only)</option>
+              <option value="29">29 (letters + space + . + ?)</option>
+            </select>
+          </div>
         </div>
 
-        <div class="field">
-        <label for="dec-base">Base</label>
-        <select id="dec-base">
-            <option value="26">26 (letters only)</option>
-            <option value="29">29 (letters + space + . + ?)</option>
-        </select>
-        </div>
+        <div class="grid-2">
+          <!-- KEY INPUT -->
+          <div class="field">
+            <label>Key input type</label>
+            <select id="dec-key-type">
+              <option value="letters" selected>Letters (4 chars)</option>
+              <option value="numbers">Numbers (a,b,c,d)</option>
+            </select>
+            <input id="dec-key-letters" type="text" maxlength="4" placeholder="e.g. defa" />
+            <input id="dec-key-nums" type="text" placeholder="e.g. 3,3,2,5" class="hidden" />
+            <small class="hint">Key forms [[a,b],[c,d]]. Letters map a→0 … z→25.</small>
+          </div>
 
-        <div class="field">
-        <label for="dec-cipher-nums">Encrypted numbers (comma-separated)</label>
-        <input id="dec-cipher-nums" type="text" placeholder="e.g. 17,11,0,21,12,5" required />
+          <!-- CIPHER INPUT -->
+          <div class="field">
+            <label>Ciphertext input type</label>
+            <select id="dec-msg-type">
+              <option value="text" selected>Text</option>
+              <option value="numbers">Numbers (comma-separated)</option>
+            </select>
+            <input id="dec-cipher-text" type="text" placeholder="e.g. qrw…" />
+            <input id="dec-cipher-nums" type="text" placeholder="e.g. 17,11,0,21,12,5" class="hidden" />
+          </div>
         </div>
 
         <div class="actions">
-        <button type="submit" class="btn primary">Decrypt</button>
-        <button type="button" id="dec-clear" class="btn">Clear</button>
+          <button type="submit" class="btn primary">Decrypt</button>
+          <button type="button" id="dec-clear" class="btn">Clear</button>
         </div>
 
         <output id="dec-out" class="result" aria-live="polite">
-        Enter key, base and ciphertext numbers to decrypt.
+          Enter key & ciphertext (text or numbers), pick a base, then Decrypt.
         </output>
-    </form>
-</section>
+      </form>
+    </section>
 
 
   </main>

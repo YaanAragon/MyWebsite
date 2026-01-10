@@ -21,8 +21,24 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.
 .badge{display:inline-block;font-weight:600;text-decoration:none;color:var(--accent);border:1px dashed var(--accent);padding:6px 10px;border-radius:999px;background:rgba(125,249,255,.07)}
 .badge:hover{background:rgba(125,249,255,.12)}
 
-.hero{position:relative;overflow:hidden;border-radius:var(--radius);margin:14px 0 0px;background:linear-gradient(180deg,#0e0e0e,#070707)}
-.hero img{display:block;width:100%;height:auto;mix-blend-mode:screen;filter:contrast(110%) brightness(110%)}
+.hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:var(--radius);
+  margin:14px 0 0;
+  background:linear-gradient(180deg,#0e0e0e,#070707);
+}
+
+/* responsive, no cropping */
+.hero img{
+  display:block;
+  width:100%;
+  height:auto;          /* keeps aspect ratio */
+  object-fit: contain;  /* ensures no crop (safe even if height gets constrained later) */
+  mix-blend-mode:screen;
+  filter:contrast(110%) brightness(110%);
+}
+
 
 main{margin:26px 0 60px}
 .card{background:var(--panel);border:1px solid #1c1c1c;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);margin:16px 0}
